@@ -45,6 +45,35 @@
       opacity: 0.7;
     }
 
+    .player {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      width: 200px;
+    }
+
+    .player.active { display: flex; }
+    .tap-label.hidden { display: none; }
+
+    .progress-track {
+      width: 100%;
+      height: 1px;
+      background: #ddd;
+    }
+
+    .progress-fill {
+      height: 1px;
+      background: #000;
+      width: 0%;
+    }
+
+    .player-label {
+      font-size: 13px;
+      opacity: 0.5;
+      letter-spacing: 0.05em;
+    }
+
     .shop-btn {
       display: inline-flex;
       align-items: center;
@@ -72,7 +101,11 @@
 <body>
   <div class="container">
     <img src="tuna_logo.svg" alt="tuna kawano" class="logo">
-    <p class="tap-label">Tap anywhere for a little voice note :)</p>
+    <p class="tap-label" id="tapLabel">Tap anywhere for a little voice note :)</p>
+    <div class="player" id="player">
+      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+      <span class="player-label" id="playerLabel">playing...</span>
+    </div>
     <a href="https://tunakawano.com" class="shop-btn" target="_blank" rel="noopener" id="shopBtn">
       SHOP &amp; GALLERY →
     </a>
@@ -81,10 +114,35 @@
   <audio id="audio" src="thank_you_message.m4a"></audio>
 
   <script>
+    const audio       = document.getElementById('audio');
+    const tapLabel    = document.getElementById('tapLabel');
+    const player      = document.getElementById('player');
+    const playerLabel = document.getElementById('playerLabel');
+    const progressFill = document.getElementById('progressFill');
+
+    function startPlayback() {
+      audio.currentTime = 0;
+      audio.play();
+      tapLabel.classList.add('hidden');
+      player.classList.add('active');
+      playerLabel.textContent = 'playing...';
+      progressFill.style.width = '0%';
+    }
+
     document.body.addEventListener('click', (e) => {
       if (e.target.closest('#shopBtn')) return;
-      document.getElementById('audio').play();
-    }, { once: true });
+      startPlayback();
+    });
+
+    audio.addEventListener('timeupdate', () => {
+      if (!audio.duration) return;
+      progressFill.style.width = (audio.currentTime / audio.duration * 100) + '%';
+    });
+
+    audio.addEventListener('ended', () => {
+      player.classList.remove('active');
+      tapLabel.classList.remove('hidden');
+    });
   </script>
 </body>
 </html>
