@@ -105,7 +105,6 @@
       justify-content: center;
       font-size: 14px;
       padding: 6px 12px;
-      width: 44px;
       margin-bottom: 15px;
       font-family: 'Courier Prime', monospace;
       letter-spacing: 0.05em;
@@ -118,6 +117,17 @@
       border-color: #000;
     }
 
+    /* Use inline SVG icons sized to match previous glyphs; prevents emoji substitution */
+    .play-pause-btn svg {
+      width: 14px;
+      height: 14px;
+      display: block;
+    }
+
+    .play-pause-btn .pause-icon { display: none; }
+    .play-pause-btn.playing .play-icon { display: none; }
+    .play-pause-btn.playing .pause-icon { display: block; }
+
   </style>
 </head>
 <body>
@@ -125,7 +135,17 @@
     <img src="tuna_logo.svg" alt="tuna kawano" class="logo">
     <p class="tap-label" id="tapLabel">Tap anywhere for a little voice note :)</p>
     <div class="player" id="player">
-      <button class="play-pause-btn" id="playPauseBtn">▶︎</button>
+      <button class="play-pause-btn" id="playPauseBtn" aria-label="play/pause" aria-pressed="false">
+        <!-- Play icon (triangle) -->
+        <svg class="play-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M8 5v14l11-7z" fill="currentColor"></path>
+        </svg>
+        <!-- Pause icon (two bars) -->
+        <svg class="pause-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <rect x="6" y="5" width="4" height="14" fill="currentColor"></rect>
+          <rect x="14" y="5" width="4" height="14" fill="currentColor"></rect>
+        </svg>
+      </button>
       <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
       <span class="player-label" id="playerLabel">playing...</span>
     </div>
@@ -137,14 +157,24 @@
   <audio id="audio" src="thank_you_message.m4a" preload="auto"></audio>
 
   <script>
-    const audio       = document.getElementById('audio');
-    const tapLabel    = document.getElementById('tapLabel');
-    const player      = document.getElementById('player');
-    const playerLabel = document.getElementById('playerLabel');
-    const progressFill = document.getElementById('progressFill');
-    const playPauseBtn = document.getElementById('playPauseBtn');
+    const audio          = document.getElementById('audio');
+    const tapLabel       = document.getElementById('tapLabel');
+    const player         = document.getElementById('player');
+    const playerLabel    = document.getElementById('playerLabel');
+    const progressFill   = document.getElementById('progressFill');
+    const playPauseBtn   = document.getElementById('playPauseBtn');
 
     let hasStarted = false;
+
+    function setPlayingUI() {
+      playPauseBtn.classList.add('playing');
+      playPauseBtn.setAttribute('aria-pressed', 'true');
+    }
+
+    function setPausedUI() {
+      playPauseBtn.classList.remove('playing');
+      playPauseBtn.setAttribute('aria-pressed', 'false');
+    }
 
     function startPlayback() {
       audio.currentTime = 0;
@@ -152,7 +182,7 @@
       tapLabel.classList.add('hidden');
       player.classList.add('active');
       playerLabel.textContent = 'playing...';
-      playPauseBtn.textContent = '⏸︎';
+      setPlayingUI();
       progressFill.style.width = '0%';
       hasStarted = true;
     }
@@ -161,11 +191,11 @@
       if (audio.paused) {
         audio.play();
         playerLabel.textContent = 'playing...';
-        playPauseBtn.textContent = '⏸︎';
+        setPlayingUI();
       } else {
         audio.pause();
         playerLabel.textContent = 'paused';
-        playPauseBtn.textContent = '▶︎';
+        setPausedUI();
       }
     }
 
@@ -203,7 +233,7 @@
       player.classList.remove('active');
       tapLabel.classList.remove('hidden');
       hasStarted = false;
-      playPauseBtn.textContent = '▶︎';
+      setPausedUI();
     });
   </script>
 </body>
