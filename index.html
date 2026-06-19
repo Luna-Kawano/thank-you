@@ -124,7 +124,7 @@
     <img src="tuna_logo.svg" alt="tuna kawano" class="logo">
     <p class="tap-label" id="tapLabel">Tap anywhere for a little voice note :)</p>
     <div class="player" id="player">
-      <button class="play-pause-btn" id="playPauseBtn">▶</button>
+      <button class="play-pause-btn" id="playPauseBtn">▶︎</button>
       <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
       <span class="player-label" id="playerLabel">playing...</span>
     </div>
@@ -151,7 +151,7 @@
       tapLabel.classList.add('hidden');
       player.classList.add('active');
       playerLabel.textContent = 'playing...';
-      playPauseBtn.textContent = '⏸';
+      playPauseBtn.textContent = '⏸︎';
       progressFill.style.width = '0%';
       hasStarted = true;
     }
@@ -160,11 +160,11 @@
       if (audio.paused) {
         audio.play();
         playerLabel.textContent = 'playing...';
-        playPauseBtn.textContent = '⏸';
+        playPauseBtn.textContent = '⏸︎';
       } else {
         audio.pause();
         playerLabel.textContent = 'paused';
-        playPauseBtn.textContent = '▶';
+        playPauseBtn.textContent = '▶︎';
       }
     }
 
@@ -202,7 +202,7 @@
       player.classList.remove('active');
       tapLabel.classList.remove('hidden');
       hasStarted = false;
-      playPauseBtn.textContent = '▶';
+      playPauseBtn.textContent = '▶︎';
     });
   </script>
 </body>
